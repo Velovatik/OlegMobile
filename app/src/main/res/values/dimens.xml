@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="loginText">22sp</dimen>
+    <dimen name="loginPadding">42sp</dimen>
+    <dimen name="textSize">42sp</dimen>
+    <dimen name="horizontal_padding">16dp</dimen>
+    <dimen name="vertical_padding">16dp</dimen>
+</resources>
