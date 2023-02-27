@@ -17,15 +17,16 @@
         android:gravity="center"
         android:text="OLEG"
         android:textSize="38sp"/>
-    
+
+
     <EditText
         android:id="@+id/et_login"
-        android:layout_marginTop="28dp"
-        android:layout_marginBottom="16dp"
-        android:hint="Login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="16dp"
         android:foregroundGravity="center"
+        android:hint="Логин"
         android:paddingLeft="@dimen/horizontal_padding"
         android:paddingTop="@dimen/loginPadding"
         android:paddingRight="@dimen/horizontal_padding"
@@ -33,7 +34,7 @@
 
     <EditText
         android:id="@+id/et_password"
-        android:hint="Password"
+        android:hint="Пароль"
         android:layout_marginBottom="28dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,6 +44,19 @@
         android:paddingRight="@dimen/horizontal_padding"
         android:textSize="22sp" />
 
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_marginBottom="16dp"
+        android:hint="Имя"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/horizontal_padding"
+        android:paddingTop="@dimen/loginPadding"
+        android:paddingRight="@dimen/horizontal_padding"
+        android:textSize="22sp"
+
+        android:visibility="invisible"/>
+
     <Button
         android:id="@+id/bt_register"
         android:layout_width="wrap_content"
@@ -50,13 +64,13 @@
         android:textAllCaps="false"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:textColor="@color/colorButton"
-        android:text="Register"/>
+        android:text="Регистрация"/>
 
     <Button
         android:id="@+id/bt_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Log in"
+        android:text="Войти"
         android:textAllCaps="false"
         android:background="@color/colorButton"
         />
