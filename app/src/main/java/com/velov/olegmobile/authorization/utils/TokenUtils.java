@@ -1,9 +1,9 @@
-package com.velov.olegmobile.autgorization.utils;
+package com.velov.olegmobile.authorization.utils;
 
-import static com.velov.olegmobile.autgorization.utils.RequestUtils.parseJSON;
+import static com.velov.olegmobile.authorization.utils.RequestUtils.parseJSON;
 
-import com.velov.olegmobile.autgorization.utils.login.LoginUtils;
-import com.velov.olegmobile.autgorization.utils.register.RegisterUtils;
+import com.velov.olegmobile.authorization.utils.login.LoginUtils;
+import com.velov.olegmobile.authorization.utils.register.RegisterUtils;
 
 import org.json.JSONException;
 
@@ -32,7 +32,7 @@ public class TokenUtils {
 
         RequestBody body = RequestBody.create(json, JSON);
 
-        Request request= new Request.Builder()
+        Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .addHeader("X-API-KEY", "oleg")
@@ -42,13 +42,13 @@ public class TokenUtils {
         Call call = client.newCall(request);
         Response response = client.newCall(request).execute();
 
-        return "Response is: " + response.body().string();
+        return response.body().string();
     }
 
     //Register
     public static String getToken(String name, String login, String password)
             throws IOException, JSONException {
-
+        int statusCode = 0;
         RequestUtils utils = new RegisterUtils();
         URL url = utils.generateURL();
 
@@ -73,5 +73,4 @@ public class TokenUtils {
 
         return response.body().string();
     }
-
 }

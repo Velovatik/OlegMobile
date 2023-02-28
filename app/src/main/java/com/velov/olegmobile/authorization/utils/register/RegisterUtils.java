@@ -1,12 +1,8 @@
-package com.velov.olegmobile.autgorization.utils.register;
+package com.velov.olegmobile.authorization.utils.register;
 
 import android.net.Uri;
 
-import com.google.gson.Gson;
-import com.velov.olegmobile.autgorization.utils.RequestUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.velov.olegmobile.authorization.utils.RequestUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;

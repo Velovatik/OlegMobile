@@ -1,19 +1,20 @@
-package com.velov.olegmobile;
+package com.velov.olegmobile.activities;
 
-import static com.velov.olegmobile.autgorization.utils.TokenUtils.getToken;
+import static com.velov.olegmobile.authorization.utils.TokenUtils.getToken;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.velov.olegmobile.autgorization.utils.AuthorizationType;
+import com.velov.olegmobile.R;
+import com.velov.olegmobile.authorization.utils.AuthorizationType;
 
 import org.json.JSONException;
 
@@ -23,7 +24,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextView result;
     private Button loginButton;
-
     private TextView oleg;
     private EditText name;
     private EditText login;
@@ -34,9 +34,10 @@ public class LoginActivity extends AppCompatActivity {
 
     //For testing response from server
     class ReturnTokenTask extends AsyncTask<Void, Void, String> {
+        private String response = null;
         @Override
         protected String doInBackground(Void... voids) {
-            String response = null;
+            //String response = null;
 
             try {
                 //Returns access token
@@ -58,6 +59,10 @@ public class LoginActivity extends AppCompatActivity {
             return response;
         }
 
+        public String getResponse() {
+            return response;
+        }
+
         //Test func for login will show access token on login page
         @Override
         protected void onPostExecute(String response) {
@@ -72,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
         result = findViewById(R.id.tv_result);
         oleg = findViewById(R.id.tv_oleg);
-        name = findViewById(R.id.et_name); /////
+        name = findViewById(R.id.et_name);
         login = findViewById(R.id.et_login);
         password = findViewById(R.id.et_password);
         loginButton = findViewById(R.id.bt_login);
@@ -82,7 +87,25 @@ public class LoginActivity extends AppCompatActivity {
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new ReturnTokenTask().execute();
+                ReturnTokenTask task = new ReturnTokenTask();
+                task.execute();
+
+                try {
+                    Thread.sleep(50000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                String text = result.getText().toString();
+
+                Context context = LoginActivity.this;
+                Class destinationActivity = CalendarActivity.class;
+
+                Intent intent = new Intent(context, destinationActivity);
+
+                String res = task.getResponse();
+                intent.putExtra("token", res);
+                startActivity(intent);
             }
         };
 
@@ -95,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (type == AuthorizationType.LOGIN) {
                     type =  AuthorizationType.REGISTER;
                     name.setVisibility(View.VISIBLE);
+
                     loginButton.setText("Зарегистрироваться");
                     registerButton.setText("Войти");
                 }
@@ -102,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                 else {
                     type = AuthorizationType.LOGIN;
                     name.setVisibility(View.INVISIBLE);
+
                     loginButton.setText("Войти");
                     registerButton.setText("Зарегистрироваться");
                 }

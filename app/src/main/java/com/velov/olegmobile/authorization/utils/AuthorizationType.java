@@ -1,4 +1,4 @@
-package com.velov.olegmobile.autgorization.utils;
+package com.velov.olegmobile.authorization.utils;
 
 public enum AuthorizationType {
     LOGIN,
