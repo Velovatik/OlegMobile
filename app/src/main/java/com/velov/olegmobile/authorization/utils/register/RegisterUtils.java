@@ -8,7 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class RegisterUtils extends RequestUtils {
-    private static final String OLEG_API_BASE_URL = "https://olegbackend.ru";
     private static final String REGISTER_URL = "/api_users/users/register";
 
     @Override

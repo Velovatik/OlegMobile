@@ -2,6 +2,8 @@ package com.velov.olegmobile.authorization.utils;
 
 import static com.velov.olegmobile.authorization.utils.RequestUtils.parseJSON;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.velov.olegmobile.authorization.utils.login.LoginUtils;
 import com.velov.olegmobile.authorization.utils.register.RegisterUtils;
 
@@ -42,13 +44,21 @@ public class TokenUtils {
         Call call = client.newCall(request);
         Response response = client.newCall(request).execute();
 
-        return response.body().string();
+        String message = response.body().string();
+        JsonObject object = new Gson().fromJson(message, JsonObject.class);
+
+        int statusCode = response.code();
+
+        if (statusCode == 200) {
+            return response.body().string();
+        } else {
+            return "ERROR";
+        }
     }
 
     //Register
     public static String getToken(String name, String login, String password)
             throws IOException, JSONException {
-        int statusCode = 0;
         RequestUtils utils = new RegisterUtils();
         URL url = utils.generateURL();
 
@@ -71,6 +81,15 @@ public class TokenUtils {
         Call call = client.newCall(request);
         Response response = client.newCall(request).execute();
 
-        return response.body().string();
+        String message = response.body().string();
+        JsonObject object = new Gson().fromJson(message, JsonObject.class);
+
+        int statusCode = response.code();
+
+        if (statusCode == 200) {
+            return object.get("access_token").getAsString();
+        } else {
+            return "ERROR";
+        }
     }
 }

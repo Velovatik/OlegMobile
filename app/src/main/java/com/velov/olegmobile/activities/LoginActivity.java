@@ -1,6 +1,14 @@
 package com.velov.olegmobile.activities;
 
-import static com.velov.olegmobile.authorization.utils.TokenUtils.getToken;
+
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.OLEG_LOGIN_URL;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.OLEG_REGISTER_URL;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.buildRequest;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.generateURL;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getResponse;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getUserData;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.makeRequest;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.parseJSON;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,10 +23,16 @@ import android.widget.TextView;
 
 import com.velov.olegmobile.R;
 import com.velov.olegmobile.authorization.utils.AuthorizationType;
+import com.velov.olegmobile.authorization.utils.User;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.net.URL;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,33 +48,30 @@ public class LoginActivity extends AppCompatActivity {
 
     //For testing response from server
     class ReturnTokenTask extends AsyncTask<Void, Void, String> {
-        private String response = null;
+        private String token = null;
         @Override
         protected String doInBackground(Void... voids) {
-            //String response = null;
-
-            try {
-                //Returns access token
-                switch (type) {
-                    case LOGIN:
-                        response = getToken(login.getText().toString(), password.getText().toString());
-                        break;
-                    case REGISTER:
-                        response = getToken(name.getText().toString(), login.getText().toString(),
-                                password.getText().toString());
-                        break;
+            URL url = null;
+            User user = null;
+            switch (type) {
+                case REGISTER: {
+                    url = generateURL(OLEG_REGISTER_URL);
+                    user = getUserData(name.getText().toString(), login.getText().toString(),
+                            password.getText().toString());
+                    break;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
+                case LOGIN: {
+                    url = generateURL(OLEG_LOGIN_URL);
+                    user = getUserData(login.getText().toString(), password.getText().toString());
+                    break;
+                }
             }
-
-            return response;
-        }
-
-        public String getResponse() {
-            return response;
+                String json = parseJSON(user);
+                OkHttpClient client = new OkHttpClient();
+                Request request = buildRequest(client, json, url);
+                Response response = makeRequest(client, request);
+                token = getResponse(response);
+                return token;
         }
 
         //Test func for login will show access token on login page
@@ -89,23 +100,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ReturnTokenTask task = new ReturnTokenTask();
                 task.execute();
-
-                try {
-                    Thread.sleep(50000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                String text = result.getText().toString();
-
-                Context context = LoginActivity.this;
-                Class destinationActivity = CalendarActivity.class;
-
-                Intent intent = new Intent(context, destinationActivity);
-
-                String res = task.getResponse();
-                intent.putExtra("token", res);
-                startActivity(intent);
             }
         };
 
