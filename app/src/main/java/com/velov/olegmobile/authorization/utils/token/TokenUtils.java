@@ -40,6 +40,7 @@ public class TokenUtils {
     }
 
     /**
+     * Method for parsing JSON
      * @param login user's login
      * @param password user's password
      * @return User Object for login operation calling constructor
@@ -52,6 +53,7 @@ public class TokenUtils {
     }
 
     /**
+     * Overloaded method for parsing JSON
      * @param name username for new user
      * @param login login for new user
      * @param password password for new user
@@ -117,10 +119,13 @@ public class TokenUtils {
         try {
             message = response.body().string();
         } catch (IOException e) {
-            e.printStackTrace();
+            return "CONNECTION ERROR";
+        } catch (NullPointerException e) {
+            return "CONNECTION ERROR";
         }
         JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
         String token = responseJSON.get("access_token").getAsString();
+
         int statusCode = response.code();
 
         if (statusCode == 200) {

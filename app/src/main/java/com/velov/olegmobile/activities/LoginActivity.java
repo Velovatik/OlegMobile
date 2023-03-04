@@ -11,10 +11,6 @@ import static com.velov.olegmobile.authorization.utils.token.TokenUtils.makeRequ
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.parseJSON;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,14 +18,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.velov.olegmobile.R;
 import com.velov.olegmobile.authorization.utils.AuthorizationType;
 import com.velov.olegmobile.authorization.utils.User;
-
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,8 +44,9 @@ public class LoginActivity extends AppCompatActivity {
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
 
+
     class ReturnToken implements Runnable {
-        private String token = null;
+        private String status = null;
 
         @Override
         public void run() { //Background work instead of doInBackground()
@@ -78,16 +70,16 @@ public class LoginActivity extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
             Request request = buildRequest(client, json, url);
             Response response = makeRequest(client, request);
-            token = getResponse(response);
+            status = getResponse(response);
 
             handler.post(new Runnable() { //UI Thread instead of onPostExecute()
                 @Override
                 public void run() {
-                    result.setText(token);
+                    result.setText(status);
+                    //Realization of validation form
                 }
             });
         }
-
     }
 
     @Override
@@ -107,9 +99,6 @@ public class LoginActivity extends AppCompatActivity {
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                ReturnTokenTask task = new ReturnTokenTask();
-//                task.execute();
-
                 ReturnToken returnToken = new ReturnToken();
                 executor.execute(returnToken);
             }
