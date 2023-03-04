@@ -16,6 +16,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +31,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,11 +50,14 @@ public class LoginActivity extends AppCompatActivity {
 
     AuthorizationType type = AuthorizationType.LOGIN;
 
-    //For testing response from server
-    class ReturnTokenTask extends AsyncTask<Void, Void, String> {
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    Handler handler = new Handler(Looper.getMainLooper());
+
+    class ReturnToken implements Runnable {
         private String token = null;
+
         @Override
-        protected String doInBackground(Void... voids) {
+        public void run() { //Background work instead of doInBackground()
             URL url = null;
             User user = null;
             switch (type) {
@@ -66,19 +73,21 @@ public class LoginActivity extends AppCompatActivity {
                     break;
                 }
             }
-                String json = parseJSON(user);
-                OkHttpClient client = new OkHttpClient();
-                Request request = buildRequest(client, json, url);
-                Response response = makeRequest(client, request);
-                token = getResponse(response);
-                return token;
+
+            String json = parseJSON(user);
+            OkHttpClient client = new OkHttpClient();
+            Request request = buildRequest(client, json, url);
+            Response response = makeRequest(client, request);
+            token = getResponse(response);
+
+            handler.post(new Runnable() { //UI Thread instead of onPostExecute()
+                @Override
+                public void run() {
+                    result.setText(token);
+                }
+            });
         }
 
-        //Test func for login will show access token on login page
-        @Override
-        protected void onPostExecute(String response) {
-            result.setText(response);
-        }
     }
 
     @Override
@@ -98,8 +107,11 @@ public class LoginActivity extends AppCompatActivity {
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ReturnTokenTask task = new ReturnTokenTask();
-                task.execute();
+//                ReturnTokenTask task = new ReturnTokenTask();
+//                task.execute();
+
+                ReturnToken returnToken = new ReturnToken();
+                executor.execute(returnToken);
             }
         };
 
@@ -115,9 +127,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     loginButton.setText("Зарегистрироваться");
                     registerButton.setText("Войти");
-                }
-
-                else {
+                } else {
                     type = AuthorizationType.LOGIN;
                     name.setVisibility(View.INVISIBLE);
 
