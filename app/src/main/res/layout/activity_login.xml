@@ -19,12 +19,13 @@
         android:textSize="38sp"/>
 
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/purple_200"
         android:foregroundGravity="center"
         android:hint="Логин"
         android:paddingLeft="@dimen/horizontal_padding"
@@ -32,19 +33,20 @@
         android:paddingRight="@dimen/horizontal_padding"
         android:textSize="22sp" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_password"
         android:hint="Пароль"
         android:layout_marginBottom="28dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/purple_200"
         android:foregroundGravity="center"
         android:paddingLeft="@dimen/horizontal_padding"
         android:paddingTop="@dimen/loginPadding"
         android:paddingRight="@dimen/horizontal_padding"
         android:textSize="22sp" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_name"
         android:layout_marginBottom="16dp"
         android:hint="Имя"

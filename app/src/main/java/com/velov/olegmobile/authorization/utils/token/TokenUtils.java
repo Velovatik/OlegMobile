@@ -115,6 +115,7 @@ public class TokenUtils {
     }
 
     public static String getResponse(Response response) {
+        int statusCode = 0;
         String token = null;
         String message = null;
         try{
@@ -123,12 +124,13 @@ public class TokenUtils {
             token = "CONNECTION ERROR";
         }
         JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
-
-        int statusCode = response.code();
+        if (!token.equals("CONNECTION ERROR")) {
+            statusCode = response.code();
+        }
 
         if (statusCode == 200) {
             token = responseJSON.get("access_token").getAsString();
-        } else token = "ERROR";
+        } else if (!token.equals("CONNECTION ERROR"))token = "ERROR";
 
         if (token.equals("CONNECTION ERROR") || token.equals("ERROR")) return token;
         else token = responseJSON.get("access_token").getAsString();

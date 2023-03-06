@@ -11,6 +11,9 @@ import static com.velov.olegmobile.authorization.utils.token.TokenUtils.makeRequ
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.parseJSON;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,6 +21,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.android.material.textfield.TextInputEditText;
 import com.velov.olegmobile.R;
 import com.velov.olegmobile.authorization.utils.AuthorizationType;
 import com.velov.olegmobile.authorization.utils.User;
@@ -34,9 +39,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextView result;
     private Button loginButton;
     private TextView oleg;
-    private EditText name;
-    private EditText login;
-    private EditText password;
+    private TextInputEditText name;
+    private TextInputEditText login;
+    private TextInputEditText password;
     private Button registerButton;
 
     AuthorizationType type = AuthorizationType.LOGIN;
@@ -80,18 +85,22 @@ public class LoginActivity extends AppCompatActivity {
 
                     switch (status) {
                         case "ERROR": {
-                            login.setBackgroundColor(getResources().getColor(R.color.red));
-                            password.setBackgroundColor(getResources().getColor(R.color.red));
+                            login.setError("Неверный логин или пароль");
+                            password.setError("");
+                            name.setError("");
+
                             break;
                         }
                         case "CONNECTION ERROR": {
-                            login.setBackgroundColor(getResources().getColor(R.color.red));
-                            password.setBackgroundColor(getResources().getColor(R.color.red));
-                            result.setText(status);
+                            login.setError("Не удается установить соединение с сервером");
+                            password.setError("");
+                            name.setError("");
+
                             break;
                         } default: {
                             result.setText(status);
                         }
+                        result.setText(status);
                     }
                 }
             });
