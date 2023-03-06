@@ -115,21 +115,23 @@ public class TokenUtils {
     }
 
     public static String getResponse(Response response) {
+        String token = null;
         String message = null;
-        try {
+        try{
             message = response.body().string();
-        } catch (IOException e) {
-            return "CONNECTION ERROR";
-        } catch (NullPointerException e) {
-            return "CONNECTION ERROR";
+        } catch (IOException | NullPointerException e) {
+            token = "CONNECTION ERROR";
         }
         JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
-        String token = responseJSON.get("access_token").getAsString();
 
         int statusCode = response.code();
 
         if (statusCode == 200) {
-            return token;
-        } else return "ERROR";
+            token = responseJSON.get("access_token").getAsString();
+        } else token = "ERROR";
+
+        if (token.equals("CONNECTION ERROR") || token.equals("ERROR")) return token;
+        else token = responseJSON.get("access_token").getAsString();
+        return token;
     }
 }

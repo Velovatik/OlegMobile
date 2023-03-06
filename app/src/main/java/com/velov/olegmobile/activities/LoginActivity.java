@@ -75,8 +75,24 @@ public class LoginActivity extends AppCompatActivity {
             handler.post(new Runnable() { //UI Thread instead of onPostExecute()
                 @Override
                 public void run() {
-                    result.setText(status);
+                    //result.setText(status);
                     //Realization of validation form
+
+                    switch (status) {
+                        case "ERROR": {
+                            login.setBackgroundColor(getResources().getColor(R.color.red));
+                            password.setBackgroundColor(getResources().getColor(R.color.red));
+                            break;
+                        }
+                        case "CONNECTION ERROR": {
+                            login.setBackgroundColor(getResources().getColor(R.color.red));
+                            password.setBackgroundColor(getResources().getColor(R.color.red));
+                            result.setText(status);
+                            break;
+                        } default: {
+                            result.setText(status);
+                        }
+                    }
                 }
             });
         }
