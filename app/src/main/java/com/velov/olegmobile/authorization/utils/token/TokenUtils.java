@@ -7,6 +7,8 @@ import com.velov.olegmobile.authorization.utils.User;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
+
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -114,26 +116,29 @@ public class TokenUtils {
         return response;
     }
 
-    public static String getResponse(Response response) {
+    static String message = null;
+
+    public static Status getStatus(Response response) {
         int statusCode = 0;
         String token = null;
-        String message = null;
+        Status status = Status.DEFAULT;
         try{
             message = response.body().string();
         } catch (IOException | NullPointerException e) {
-            token = "CONNECTION ERROR";
+            return Status.CONNECTION_ERROR;
         }
-        JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
-        if (!token.equals("CONNECTION ERROR")) {
-            statusCode = response.code();
-        }
+        statusCode = response.code();
 
         if (statusCode == 200) {
-            token = responseJSON.get("access_token").getAsString();
-        } else if (!token.equals("CONNECTION ERROR"))token = "ERROR";
+            return Status.OK;
+        } else {
+            return Status.ERROR;
+        }
+    }
 
-        if (token.equals("CONNECTION ERROR") || token.equals("ERROR")) return token;
-        else token = responseJSON.get("access_token").getAsString();
+    public static String getToken(Response response) {
+        JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
+        String token = responseJSON.get("access_token").getAsString();
         return token;
     }
 }

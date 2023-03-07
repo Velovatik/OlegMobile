@@ -5,27 +5,26 @@ import static com.velov.olegmobile.authorization.utils.token.TokenUtils.OLEG_LOG
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.OLEG_REGISTER_URL;
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.buildRequest;
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.generateURL;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getResponse;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getStatus;
+import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getToken;
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getUserData;
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.makeRequest;
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.parseJSON;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.velov.olegmobile.R;
 import com.velov.olegmobile.authorization.utils.AuthorizationType;
 import com.velov.olegmobile.authorization.utils.User;
+import com.velov.olegmobile.authorization.utils.token.Status;
+
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,13 +35,9 @@ import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private Button loginButton, registerButton;
     private TextView result;
-    private Button loginButton;
-    private TextView oleg;
-    private TextInputEditText name;
-    private TextInputEditText login;
-    private TextInputEditText password;
-    private Button registerButton;
+    private TextInputEditText name, login, password;
 
     AuthorizationType type = AuthorizationType.LOGIN;
 
@@ -51,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     class ReturnToken implements Runnable {
-        private String status = null;
+        private String token = null;
 
         @Override
         public void run() { //Background work instead of doInBackground()
@@ -75,32 +70,35 @@ public class LoginActivity extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
             Request request = buildRequest(client, json, url);
             Response response = makeRequest(client, request);
-            status = getResponse(response);
+            Status status = getStatus(response);
 
             handler.post(new Runnable() { //UI Thread instead of onPostExecute()
                 @Override
                 public void run() {
-                    //result.setText(status);
                     //Realization of validation form
+                    if (login.getText().toString().isEmpty()) login.setError("Поле не может быть пустым");
+                    else if (password.getText().toString().isEmpty()) password.setError("Поле не может быть пустым");
+                    if (name.getVisibility() == View.VISIBLE && name.getText().toString().isEmpty())
+                        name.setError("Поле не может быть пустым");
 
                     switch (status) {
-                        case "ERROR": {
+                        case OK: {
+                            token = getToken(response);
+                            result.setText(token);
+                            break;
+                        }
+                        case ERROR: {
                             login.setError("Неверный логин или пароль");
-                            password.setError("");
-                            name.setError("");
-
+                            password.setError("Неверный логин или пароль");
+                            if (name.getVisibility() == View.VISIBLE) name.setError("Неверный логин или пароль");
                             break;
                         }
-                        case "CONNECTION ERROR": {
+                        case CONNECTION_ERROR: {
                             login.setError("Не удается установить соединение с сервером");
-                            password.setError("");
-                            name.setError("");
-
+                            password.setError("Не удается установить соединение с сервером");
+                            if (name.getVisibility() == View.VISIBLE) name.setError("Не удается установить соединение с сервером");
                             break;
-                        } default: {
-                            result.setText(status);
                         }
-                        result.setText(status);
                     }
                 }
             });
@@ -113,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         result = findViewById(R.id.tv_result);
-        oleg = findViewById(R.id.tv_oleg);
+        //oleg = findViewById(R.id.tv_oleg);
         name = findViewById(R.id.et_name);
         login = findViewById(R.id.et_login);
         password = findViewById(R.id.et_password);
