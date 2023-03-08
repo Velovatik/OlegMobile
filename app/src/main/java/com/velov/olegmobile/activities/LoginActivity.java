@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
     class ReturnToken implements Runnable {
         private String token = null;
+        private Status status = Status.DEFAULT;
 
         @Override
         public void run() { //Background work instead of doInBackground()
@@ -73,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
             Request request = buildRequest(client, json, url);
             Response response = makeRequest(client, request);
-            Status status = getStatus(response);
+            status = getStatus(response);
 
             handler.post(new Runnable() { //UI Thread instead of onPostExecute()
                 public void showError(String message) {
@@ -81,7 +82,10 @@ public class LoginActivity extends AppCompatActivity {
                     password.setError(message);
                     if (name.getVisibility() == View.VISIBLE) name.setError(message);
                 }
-
+                public void goToCalendar() {
+                    Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
+                    startActivity(intent);
+                }
                 @Override
                 public void run() {
                     //Realization of validation form
@@ -93,28 +97,40 @@ public class LoginActivity extends AppCompatActivity {
                             .toString().isEmpty()) {
                         name.setError("Поле не может быть пустым");
                     } else {
-                        switch (status) {
-                            case OK: {
-                                token = getToken(response);
-                                result.setText(token);
-                                break;
+                        try {
+                            switch (status) {
+                                case OK: {
+                                    token = getToken(response);
+                                    result.setText(token); //test mode
+                                    break;
+                                }
+                                case ERROR: {
+                                    showError("Неверный логин или пароль");
+                                    break;
+                                }
+                                case CONNECTION_ERROR: {
+                                    showError("Не удается установить соединение с сервером");
+                                    break;
+                                }
                             }
-                            case ERROR: {
-                                showError("Неверный логин или пароль");
-                                break;
-                            }
-                            case CONNECTION_ERROR: {
-                                showError("Не удается установить соединение с сервером");
-                                break;
+                        } finally {
+                            SharedPreferences sharedPreferences = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
+                            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                            myEdit.putString("token", token);
+                            myEdit.commit(); //fix
+
+                            if (getActStatus() == Status.OK) {
+                                goToCalendar();
                             }
                         }
                     }
-//                    SharedPreferences sharedPreferences = getSharedPreferences("token",MODE_PRIVATE);
-//                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
-//                    myEdit.putString("token", token);
-//                    myEdit.commit(); //fix
                 }
+
             });
+        }
+
+        public Status getActStatus() {
+            return status;
         }
     }
 
@@ -136,8 +152,6 @@ public class LoginActivity extends AppCompatActivity {
                 ReturnToken returnToken = new ReturnToken();
                 executor.execute(returnToken);
                 //Create condition for switching to calendar activity
-                Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
-                startActivity(intent);
             }
         };
 
