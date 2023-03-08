@@ -70,7 +70,7 @@ public class TokenUtils {
 
     /**
      * @param user require User Object for automatic creation JSON string
-     * @return JSON in String format for request body
+     * @return serialized JSON in String format for request body
      */
     public static String parseJSON(User user) {
         Gson gson = new Gson();
@@ -85,7 +85,7 @@ public class TokenUtils {
     public static Request buildRequest(OkHttpClient client, String json, URL url) {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-        RequestBody body = RequestBody.create(json, JSON);
+        RequestBody body = RequestBody.create(json, JSON); //JSON deserialization
 
         Request request = new Request.Builder()
                 .url(url)
@@ -118,6 +118,12 @@ public class TokenUtils {
 
     static String message = null;
 
+    /**
+     * Middleware layer for getting response status and validate fields
+     * Cycling through enum and show status
+     * @param response use response from server for status recognition
+     * @return enum value that shows is everything OK
+     */
     public static Status getStatus(Response response) {
         int statusCode = 0;
         String token = null;
@@ -136,6 +142,11 @@ public class TokenUtils {
         }
     }
 
+    /**
+     * if getStatus() returns Status.OK it returns token for further authorization
+     * @param response use response from server for JSON serialization key from "access_token" value
+     * @return serialized access_token
+     */
     public static String getToken(Response response) {
         JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
         String token = responseJSON.get("access_token").getAsString();

@@ -73,31 +73,37 @@ public class LoginActivity extends AppCompatActivity {
             Status status = getStatus(response);
 
             handler.post(new Runnable() { //UI Thread instead of onPostExecute()
+                public void showError(String message) {
+                    login.setError(message);
+                    password.setError(message);
+                    if (name.getVisibility() == View.VISIBLE) name.setError(message);
+                }
+
                 @Override
                 public void run() {
                     //Realization of validation form
-                    if (login.getText().toString().isEmpty()) login.setError("Поле не может быть пустым");
-                    else if (password.getText().toString().isEmpty()) password.setError("Поле не может быть пустым");
-                    if (name.getVisibility() == View.VISIBLE && name.getText().toString().isEmpty())
+                    if (login.getText().toString().matches("")) {
+                        login.setError("Поле не может быть пустым");
+                    } else if (password.getText().toString().matches("")) {
+                        password.setError("Поле не может быть пустым");
+                    } else if (name.getVisibility() == View.VISIBLE && name.getText()
+                            .toString().matches("")) {
                         name.setError("Поле не может быть пустым");
-
-                    switch (status) {
-                        case OK: {
-                            token = getToken(response);
-                            result.setText(token);
-                            break;
-                        }
-                        case ERROR: {
-                            login.setError("Неверный логин или пароль");
-                            password.setError("Неверный логин или пароль");
-                            if (name.getVisibility() == View.VISIBLE) name.setError("Неверный логин или пароль");
-                            break;
-                        }
-                        case CONNECTION_ERROR: {
-                            login.setError("Не удается установить соединение с сервером");
-                            password.setError("Не удается установить соединение с сервером");
-                            if (name.getVisibility() == View.VISIBLE) name.setError("Не удается установить соединение с сервером");
-                            break;
+                    } else {
+                        switch (status) {
+                            case OK: {
+                                token = getToken(response);
+                                result.setText(token);
+                                break;
+                            }
+                            case ERROR: {
+                                showError("Неверный логин или пароль");
+                                break;
+                            }
+                            case CONNECTION_ERROR: {
+                                showError("Не удается установить соединение с сервером");
+                                break;
+                            }
                         }
                     }
                 }
@@ -111,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         result = findViewById(R.id.tv_result);
-        //oleg = findViewById(R.id.tv_oleg);
         name = findViewById(R.id.et_name);
         login = findViewById(R.id.et_login);
         password = findViewById(R.id.et_password);
@@ -146,10 +151,8 @@ public class LoginActivity extends AppCompatActivity {
                     loginButton.setText("Войти");
                     registerButton.setText("Зарегистрироваться");
                 }
-
             }
         };
-
         registerButton.setOnClickListener(onClickRegisterListener);
     }
 }
