@@ -24,10 +24,7 @@ public class CalendarActivity extends AppCompatActivity {
         result = findViewById(R.id.tv_result);
 
         Intent intent = getIntent();
-        //String token = intent.getStringExtra(Intent.EXTRA_TEXT);
-        Bundle arguments = getIntent().getExtras();
-        String token = arguments.get("token").toString();
-        result.setText(token);
+
     }
 
 }

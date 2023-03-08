@@ -20,6 +20,7 @@ public class TokenUtils {
     public static final String OLEG_LOGIN_URL = "https://olegbackend.ru/api_users/users/login";
     public static final String OLEG_REGISTER_URL =
             "https://olegbackend.ru/api_users/users/register";
+    static String message = null;
 
     /**
      * URL parser for request
@@ -116,8 +117,6 @@ public class TokenUtils {
         return response;
     }
 
-    static String message = null;
-
     /**
      * Middleware layer for getting response status and validate fields
      * Cycling through enum and show status
@@ -131,6 +130,7 @@ public class TokenUtils {
         try{
             message = response.body().string();
         } catch (IOException | NullPointerException e) {
+            response.close();
             return Status.CONNECTION_ERROR;
         }
         statusCode = response.code();
@@ -138,6 +138,7 @@ public class TokenUtils {
         if (statusCode == 200) {
             return Status.OK;
         } else {
+            response.close();
             return Status.ERROR;
         }
     }
@@ -150,6 +151,7 @@ public class TokenUtils {
     public static String getToken(Response response) {
         JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
         String token = responseJSON.get("access_token").getAsString();
+        response.close();
         return token;
     }
 }

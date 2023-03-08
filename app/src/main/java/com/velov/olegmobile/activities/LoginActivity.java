@@ -12,6 +12,9 @@ import static com.velov.olegmobile.authorization.utils.token.TokenUtils.makeRequ
 import static com.velov.olegmobile.authorization.utils.token.TokenUtils.parseJSON;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -82,12 +85,12 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     //Realization of validation form
-                    if (login.getText().toString().matches("")) {
+                    if (login.getText().toString().isEmpty()) {
                         login.setError("Поле не может быть пустым");
-                    } else if (password.getText().toString().matches("")) {
+                    } else if (password.getText().toString().isEmpty()) {
                         password.setError("Поле не может быть пустым");
                     } else if (name.getVisibility() == View.VISIBLE && name.getText()
-                            .toString().matches("")) {
+                            .toString().isEmpty()) {
                         name.setError("Поле не может быть пустым");
                     } else {
                         switch (status) {
@@ -106,6 +109,10 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     }
+//                    SharedPreferences sharedPreferences = getSharedPreferences("token",MODE_PRIVATE);
+//                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+//                    myEdit.putString("token", token);
+//                    myEdit.commit(); //fix
                 }
             });
         }
@@ -123,12 +130,14 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.bt_login);
         registerButton = findViewById(R.id.bt_register);
 
-
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ReturnToken returnToken = new ReturnToken();
                 executor.execute(returnToken);
+                //Create condition for switching to calendar activity
+                Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
+                startActivity(intent);
             }
         };
 
