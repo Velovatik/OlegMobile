@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.velov.olegmobile.R;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +31,7 @@ public class CalendarActivity extends AppCompatActivity {
     Handler handler = new Handler(Looper.getMainLooper());
 
     class CalendarRequest implements Runnable {
+        String calendarData = null;
         @Override
         public void run() { //Background work instead of doInBackground()
             URL url = generateURL(CALENDAR_URL);
@@ -38,11 +40,16 @@ public class CalendarActivity extends AppCompatActivity {
             String token = sh.getString("token", "");
             Request request = buildRequest(client, url, token);
             Response response = makeRequest(client, request);
+            try {
+                calendarData = response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             handler.post(new Runnable() { //UI Thread instead of onPostExecute()
                 @Override
                 public void run() {
-                    key.setText(response.toString());
+                    key.setText(calendarData);
                 }
             });
         }
