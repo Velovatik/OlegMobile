@@ -1,13 +1,13 @@
-package com.velov.olegmobile.authorization.utils.token;
+package com.velov.olegmobile.httputils.authorization;
 
 import android.net.Uri;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.velov.olegmobile.authorization.utils.User;
+import com.velov.olegmobile.httputils.HttpUtils;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -16,31 +16,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class TokenUtils {
+public class TokenUtils extends HttpUtils {
     public static final String OLEG_LOGIN_URL = "https://olegbackend.ru/api_users/users/login";
     public static final String OLEG_REGISTER_URL =
             "https://olegbackend.ru/api_users/users/register";
     static String message = null;
-
-    /**
-     * URL parser for request
-     * @param stringUrl requires URI in String format
-     * @return URL Object for request
-     */
-    public static URL generateURL(String stringUrl) {
-        Uri builtUri = Uri.parse(stringUrl)
-                .buildUpon()
-                .build();
-
-        URL url = null;
-        try {
-            url = new URL(builtUri.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        return url;
-    }
 
     /**
      * Method for parsing JSON
@@ -96,25 +76,6 @@ public class TokenUtils {
                 .build();
 
         return request;
-    }
-
-    /**
-     * Method send http request
-     * @param client httpclient name
-     * @param request require prepared request
-     * @return access token as string
-     */
-    public static Response makeRequest(OkHttpClient client, Request request) {
-        Call call = client.newCall(request);
-        Response response = null;
-        try {
-            response = client.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            call.cancel();
-        }
-        return response;
     }
 
     /**

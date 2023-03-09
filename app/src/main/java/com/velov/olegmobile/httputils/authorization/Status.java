@@ -1,4 +1,4 @@
-package com.velov.olegmobile.authorization.utils.token;
+package com.velov.olegmobile.httputils.authorization;
 
 public enum Status {
     OK,

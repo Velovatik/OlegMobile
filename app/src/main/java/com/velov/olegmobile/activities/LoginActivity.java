@@ -1,15 +1,15 @@
 package com.velov.olegmobile.activities;
 
 
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.OLEG_LOGIN_URL;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.OLEG_REGISTER_URL;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.buildRequest;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.generateURL;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getStatus;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getToken;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.getUserData;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.makeRequest;
-import static com.velov.olegmobile.authorization.utils.token.TokenUtils.parseJSON;
+import static com.velov.olegmobile.httputils.authorization.TokenUtils.OLEG_LOGIN_URL;
+import static com.velov.olegmobile.httputils.authorization.TokenUtils.OLEG_REGISTER_URL;
+import static com.velov.olegmobile.httputils.authorization.TokenUtils.buildRequest;
+import static com.velov.olegmobile.httputils.HttpUtils.generateURL;
+import static com.velov.olegmobile.httputils.authorization.TokenUtils.getStatus;
+import static com.velov.olegmobile.httputils.authorization.TokenUtils.getToken;
+import static com.velov.olegmobile.httputils.authorization.TokenUtils.getUserData;
+import static com.velov.olegmobile.httputils.authorization.TokenUtils.makeRequest;
+import static com.velov.olegmobile.httputils.authorization.TokenUtils.parseJSON;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,9 +24,9 @@ import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.velov.olegmobile.R;
-import com.velov.olegmobile.authorization.utils.AuthorizationType;
-import com.velov.olegmobile.authorization.utils.User;
-import com.velov.olegmobile.authorization.utils.token.Status;
+import com.velov.olegmobile.httputils.authorization.AuthorizationType;
+import com.velov.olegmobile.httputils.authorization.User;
+import com.velov.olegmobile.httputils.authorization.Status;
 
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
@@ -115,9 +115,9 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         } finally {
                             SharedPreferences sharedPreferences = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
-                            SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                            myEdit.putString("token", token);
-                            myEdit.commit(); //fix
+                            SharedPreferences.Editor tokenEditor = sharedPreferences.edit();
+                            tokenEditor.putString("token", token);
+                            tokenEditor.apply(); //fix
 
                             if (getActStatus() == Status.OK) {
                                 goToCalendar();
@@ -151,7 +151,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ReturnToken returnToken = new ReturnToken();
                 executor.execute(returnToken);
-                //Create condition for switching to calendar activity
             }
         };
 

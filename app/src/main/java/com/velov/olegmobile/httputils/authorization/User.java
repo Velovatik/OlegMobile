@@ -1,4 +1,4 @@
-package com.velov.olegmobile.authorization.utils;
+package com.velov.olegmobile.httputils.authorization;
 
 public class User {
     private String login;
