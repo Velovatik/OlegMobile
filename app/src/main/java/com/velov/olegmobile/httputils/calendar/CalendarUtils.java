@@ -10,17 +10,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class CalendarUtils extends HttpUtils {
-    public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar";
+    public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar?cal_date=2022-05-26";
 
-    public static Request buildRequest(OkHttpClient client, String json, URL url, String token) {
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-        RequestBody body = RequestBody.create(json, JSON); //JSON deserialization
+    public static Request buildRequest(OkHttpClient client, URL url, String token) {
 
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("X-API-KEY", "oleg")
-                .addHeader("Content-Type", "application/json")
+                .addHeader("Connection", "keep-alive")
                 .addHeader("Authorization", "Bearer " + token)
                 .build();
 

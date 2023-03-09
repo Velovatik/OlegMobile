@@ -1,6 +1,7 @@
 package com.velov.olegmobile.activities;
 
 import static com.velov.olegmobile.httputils.HttpUtils.generateURL;
+import static com.velov.olegmobile.httputils.calendar.CalendarUtils.*;
 import static com.velov.olegmobile.httputils.calendar.CalendarUtils.CALENDAR_URL;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,10 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class CalendarActivity extends AppCompatActivity {
 
     private TextView key;
@@ -28,10 +33,16 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         public void run() { //Background work instead of doInBackground()
             URL url = generateURL(CALENDAR_URL);
+            OkHttpClient client = new OkHttpClient();
+            SharedPreferences sh = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
+            String token = sh.getString("token", "");
+            Request request = buildRequest(client, url, token);
+            Response response = makeRequest(client, request);
+
             handler.post(new Runnable() { //UI Thread instead of onPostExecute()
                 @Override
                 public void run() {
-
+                    key.setText(response.toString());
                 }
             });
         }
@@ -43,9 +54,8 @@ public class CalendarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calendar);
         key = findViewById(R.id.tv_result);
 
-        SharedPreferences sh = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
-        String token = sh.getString("token", "");
-        key.setText(token);
+        CalendarRequest calendarRequest = new CalendarRequest();
+        executor.execute(calendarRequest);
     }
 
 }
