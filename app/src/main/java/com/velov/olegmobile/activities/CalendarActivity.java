@@ -64,5 +64,4 @@ public class CalendarActivity extends AppCompatActivity {
         CalendarRequest calendarRequest = new CalendarRequest();
         executor.execute(calendarRequest);
     }
-
 }

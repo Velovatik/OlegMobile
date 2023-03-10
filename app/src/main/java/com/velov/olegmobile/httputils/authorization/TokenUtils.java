@@ -63,7 +63,7 @@ public class TokenUtils extends HttpUtils {
      * @param json require String for building request
      * @return Request Object for request sending
      */
-    public static Request buildRequest(OkHttpClient client, String json, URL url) {
+    public static Request buildRequest(OkHttpClient client, URL url, String json) {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
         RequestBody body = RequestBody.create(json, JSON); //JSON deserialization
@@ -91,7 +91,6 @@ public class TokenUtils extends HttpUtils {
         try{
             message = response.body().string();
         } catch (IOException | NullPointerException e) {
-            response.close();
             return Status.CONNECTION_ERROR;
         }
         statusCode = response.code();
@@ -99,7 +98,6 @@ public class TokenUtils extends HttpUtils {
         if (statusCode == 200) {
             return Status.OK;
         } else {
-            response.close();
             return Status.ERROR;
         }
     }
@@ -112,7 +110,6 @@ public class TokenUtils extends HttpUtils {
     public static String getToken(Response response) {
         JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
         String token = responseJSON.get("access_token").getAsString();
-        response.close();
         return token;
     }
 }

@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
 
             String json = parseJSON(user);
             OkHttpClient client = new OkHttpClient();
-            Request request = buildRequest(client, json, url);
+            Request request = buildRequest(client, url, json);
             Response response = makeRequest(client, request);
             status = getStatus(response);
 

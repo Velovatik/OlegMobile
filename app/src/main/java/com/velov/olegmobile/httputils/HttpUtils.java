@@ -13,7 +13,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public abstract class HttpUtils {
+public class HttpUtils {
     /**
      * URL parser for request
      * @param stringUrl requires URI in String format
