@@ -37,7 +37,7 @@ public class CalendarActivity extends AppCompatActivity {
             URL url = generateURL(CALENDAR_URL);
             OkHttpClient client = new OkHttpClient();
             SharedPreferences sh = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
-            String token = sh.getString("token", "");
+            String token = sh.getString("token", ""); //fix
             Request request = buildRequest(client, url, token);
             Response response = makeRequest(client, request);
             try {

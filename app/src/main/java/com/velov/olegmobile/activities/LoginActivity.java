@@ -41,19 +41,29 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton, registerButton;
     private TextView result;
     private TextInputEditText name, login, password;
-
+    private TextView tokenResult;
     AuthorizationType type = AuthorizationType.LOGIN;
+
+    SharedPreferences sharedPreferences; //Initialize sharedPreferences storage for token holding
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
 
+    private String token = null; //Variable for writing and reading access_token param
 
     class ReturnToken implements Runnable {
-        private String token = null;
         private Status status = Status.DEFAULT;
+
+        void writeSharedPreferences(String string) {
+            sharedPreferences = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor tokenEditor = sharedPreferences.edit();
+            tokenEditor.putString("token", string);
+            tokenEditor.apply(); //fix
+        }
 
         @Override
         public void run() { //Background work instead of doInBackground()
+
             URL url = null;
             User user = null;
             switch (type) {
@@ -77,15 +87,24 @@ public class LoginActivity extends AppCompatActivity {
             status = getStatus(response);
 
             handler.post(new Runnable() { //UI Thread instead of onPostExecute()
+                /**
+                 * Method shows err message in all editText fields
+                 * @param message set String error message
+                 */
                 public void showError(String message) {
                     login.setError(message);
                     password.setError(message);
                     if (name.getVisibility() == View.VISIBLE) name.setError(message);
                 }
+
+                /**
+                 * Method invoke redirection on calendar activity
+                 */
                 public void goToCalendar() {
                     Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
                     startActivity(intent);
                 }
+
                 @Override
                 public void run() {
                     //Realization of validation form
@@ -114,10 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         } finally {
-                            SharedPreferences sharedPreferences = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
-                            SharedPreferences.Editor tokenEditor = sharedPreferences.edit();
-                            tokenEditor.putString("token", token);
-                            tokenEditor.apply(); //fix
+                            writeSharedPreferences(token);
 
                             if (getActStatus() == Status.OK) {
                                 goToCalendar();
@@ -139,12 +155,18 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //Connection for layouts
         result = findViewById(R.id.tv_result);
         name = findViewById(R.id.et_name);
         login = findViewById(R.id.et_login);
         password = findViewById(R.id.et_password);
         loginButton = findViewById(R.id.bt_login);
         registerButton = findViewById(R.id.bt_register);
+        tokenResult = findViewById(R.id.tv_token);
+
+        if (token != null) {
+            tokenResult.setText(sharedPreferences.getString("token", "не определено"));
+        }
 
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
             @Override
