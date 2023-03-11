@@ -44,8 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tokenResult;
     AuthorizationType type = AuthorizationType.LOGIN;
 
-    SharedPreferences sharedPreferences; //Initialize sharedPreferences storage for token holding
-
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
 
@@ -54,18 +52,11 @@ public class LoginActivity extends AppCompatActivity {
     class ReturnToken implements Runnable {
         private Status status = Status.DEFAULT;
 
-        void writeSharedPreferences(String string) {
-            sharedPreferences = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
-            SharedPreferences.Editor tokenEditor = sharedPreferences.edit();
-            tokenEditor.putString("token", string);
-            tokenEditor.apply(); //fix
-        }
-
         @Override
         public void run() { //Background work instead of doInBackground()
-
             URL url = null;
             User user = null;
+
             switch (type) {
                 case REGISTER: {
                     url = generateURL(OLEG_REGISTER_URL);
@@ -133,7 +124,10 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         } finally {
-                            writeSharedPreferences(token);
+                            SharedPreferences sharedPreferences = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
+                            SharedPreferences.Editor tokenEditor = sharedPreferences.edit();
+                            tokenEditor.putString("token", token);
+                            tokenEditor.apply(); //fix
 
                             if (getActStatus() == Status.OK) {
                                 goToCalendar();
@@ -163,10 +157,6 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.bt_login);
         registerButton = findViewById(R.id.bt_register);
         tokenResult = findViewById(R.id.tv_token);
-
-        if (token != null) {
-            tokenResult.setText(sharedPreferences.getString("token", "не определено"));
-        }
 
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
             @Override

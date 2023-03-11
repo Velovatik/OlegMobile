@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/LoginTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,18 +11,15 @@
     android:padding="26dp"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_oleg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="OLEG"
-        android:textSize="38sp"/>
+    <ImageView
+        android:layout_width="134dp"
+        android:layout_height="51dp"
+        android:src="@drawable/oleg_login" />
 
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_login"
-        android:layout_width="match_parent"
+        android:layout_width="281dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:layout_marginBottom="16dp"
@@ -35,12 +33,13 @@
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_password"
-        android:hint="Пароль"
-        android:layout_marginBottom="28dp"
-        android:layout_width="match_parent"
+        android:layout_width="283dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
         android:backgroundTint="@color/purple_200"
         android:foregroundGravity="center"
+        android:inputType="textPassword"
+        android:hint="Пароль"
         android:paddingLeft="@dimen/horizontal_padding"
         android:paddingTop="@dimen/loginPadding"
         android:paddingRight="@dimen/horizontal_padding"
@@ -48,38 +47,39 @@
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_name"
+        android:layout_width="281dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:hint="Имя"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:paddingLeft="@dimen/horizontal_padding"
         android:paddingTop="@dimen/loginPadding"
         android:paddingRight="@dimen/horizontal_padding"
         android:textSize="22sp"
 
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
-    <Button
-        android:id="@+id/bt_register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:textColor="@color/colorButton"
-        android:text="Регистрация"/>
-
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/bt_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Войти"
         android:textAllCaps="false"
-        android:background="@color/colorButton"
+        android:background="@drawable/login_button"
+        app:shapeAppearanceOverlay="@style/LoginButtonShape"
         />
     
 
 
     <!--test field to show http POST method for login-->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bt_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:text="Регистрация"
+        android:textAllCaps="false"
+        android:textColor="@color/colorButton" />
+
     <TextView
         android:layout_marginTop="26dp"
         android:id="@+id/tv_result"

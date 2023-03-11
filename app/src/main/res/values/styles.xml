@@ -4,4 +4,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorButtonNormal">@color/colorButton</item>
     </style>
+
+    <style name="LoginButtonShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
