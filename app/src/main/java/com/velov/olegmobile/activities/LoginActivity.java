@@ -29,6 +29,7 @@ import com.velov.olegmobile.httputils.authorization.User;
 import com.velov.olegmobile.httputils.authorization.Status;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -47,10 +48,16 @@ public class LoginActivity extends AppCompatActivity {
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
 
+    SharedPreferences tokenPreferences;
+
     private String token = null; //Variable for writing and reading access_token param
 
     class ReturnToken implements Runnable {
         private Status status = Status.DEFAULT;
+
+        public Status getRequestStatus() {
+            return status;
+        }
 
         @Override
         public void run() { //Background work instead of doInBackground()
@@ -82,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                  * Method shows err message in all editText fields
                  * @param message set String error message
                  */
-                public void showError(String message) {
+                public void showError(String message) { //Rewrite just to show message in textView under EditText fields
                     login.setError(message);
                     password.setError(message);
                     if (name.getVisibility() == View.VISIBLE) name.setError(message);
@@ -98,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void run() {
-                    //Realization of validation form
+                    //Conditions for checking if information is correct
                     if (login.getText().toString().isEmpty()) {
                         login.setError("Поле не может быть пустым");
                     } else if (password.getText().toString().isEmpty()) {
@@ -111,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                             switch (status) {
                                 case OK: {
                                     token = getToken(response);
-                                    result.setText(token); //test mode
+                                    result.setText(token); //Field for test response from server
                                     break;
                                 }
                                 case ERROR: {
@@ -124,12 +131,12 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         } finally {
-                            SharedPreferences sharedPreferences = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
-                            SharedPreferences.Editor tokenEditor = sharedPreferences.edit();
+                            tokenPreferences = getSharedPreferences("access_token", MODE_PRIVATE); //access_token is name of prefs file
+                            SharedPreferences.Editor tokenEditor = tokenPreferences.edit();
                             tokenEditor.putString("token", token);
-                            tokenEditor.apply(); //fix
+                            tokenEditor.apply();
 
-                            if (getActStatus() == Status.OK) {
+                            if (getRequestStatus() == Status.OK) {
                                 goToCalendar();
                             }
                         }
@@ -137,10 +144,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
             });
-        }
-
-        public Status getActStatus() {
-            return status;
         }
     }
 
@@ -158,6 +161,13 @@ public class LoginActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.bt_register);
         tokenResult = findViewById(R.id.tv_token);
 
+        tokenPreferences = getSharedPreferences("access_token", MODE_PRIVATE);
+        String access_token = tokenPreferences.getString("token", "undefined");
+        if (!Objects.equals(access_token, "undefined")) {
+            Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
+            startActivity(intent);
+        }
+
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,18 +178,22 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(onClickLoginListener);
 
+
+
         View.OnClickListener onClickRegisterListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (type == AuthorizationType.LOGIN) {
                     type =  AuthorizationType.REGISTER;
+
                     name.setVisibility(View.VISIBLE);
 
                     loginButton.setText("Зарегистрироваться");
                     registerButton.setText("Войти");
                 } else {
                     type = AuthorizationType.LOGIN;
+
                     name.setVisibility(View.INVISIBLE);
 
                     loginButton.setText("Войти");

@@ -36,8 +36,8 @@ public class CalendarActivity extends AppCompatActivity {
         public void run() { //Background work instead of doInBackground()
             URL url = generateURL(CALENDAR_URL);
             OkHttpClient client = new OkHttpClient();
-            SharedPreferences sh = getSharedPreferences("tokenSharedPrefs", MODE_PRIVATE);
-            String token = sh.getString("token", ""); //fix
+            SharedPreferences sh = getSharedPreferences("access_token", MODE_PRIVATE);
+            String token = sh.getString("token", "undefined"); //fix
             Request request = buildRequest(client, url, token);
             Response response = makeRequest(client, request);
             try {
