@@ -42,13 +42,37 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton, registerButton;
     private TextView result;
     private TextInputEditText name, login, password;
-    private TextView tokenResult;
     AuthorizationType type = AuthorizationType.LOGIN;
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
 
     SharedPreferences tokenPreferences;
+
+    /**
+     * Method invoke redirection on calendar activity
+     */
+    public void goToCalendar() {
+        Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
+        startActivity(intent);
+    }
+
+    //Those methods will be moved to middleWare
+    public boolean existingTokenCheck(SharedPreferences preferences) {
+        preferences = getSharedPreferences("access_token", MODE_PRIVATE);
+        String access_token = preferences.getString("token", "undefined");
+        if (!Objects.equals(access_token, "undefined")) {
+            return false;
+        }
+        else return true;
+    }
+
+    public void writeTokenToCookies(SharedPreferences preferences, String value) {
+        preferences = getSharedPreferences("access_token", MODE_PRIVATE); //access_token is name of prefs file
+        SharedPreferences.Editor tokenEditor = preferences.edit();
+        tokenEditor.putString("token", value);
+        tokenEditor.apply();
+    }
 
     private String token = null; //Variable for writing and reading access_token param
 
@@ -95,14 +119,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (name.getVisibility() == View.VISIBLE) name.setError(message);
                 }
 
-                /**
-                 * Method invoke redirection on calendar activity
-                 */
-                public void goToCalendar() {
-                    Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
-                    startActivity(intent);
-                }
-
                 @Override
                 public void run() {
                     //Conditions for checking if information is correct
@@ -131,10 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         } finally {
-                            tokenPreferences = getSharedPreferences("access_token", MODE_PRIVATE); //access_token is name of prefs file
-                            SharedPreferences.Editor tokenEditor = tokenPreferences.edit();
-                            tokenEditor.putString("token", token);
-                            tokenEditor.apply();
+                            writeTokenToCookies(tokenPreferences, token);
 
                             if (getRequestStatus() == Status.OK) {
                                 goToCalendar();
@@ -159,13 +172,9 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.et_password);
         loginButton = findViewById(R.id.bt_login);
         registerButton = findViewById(R.id.bt_register);
-        tokenResult = findViewById(R.id.tv_token);
 
-        tokenPreferences = getSharedPreferences("access_token", MODE_PRIVATE);
-        String access_token = tokenPreferences.getString("token", "undefined");
-        if (!Objects.equals(access_token, "undefined")) {
-            Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
-            startActivity(intent);
+        if (existingTokenCheck(tokenPreferences)) {
+            goToCalendar();
         }
 
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
