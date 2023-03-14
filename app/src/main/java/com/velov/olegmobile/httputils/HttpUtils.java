@@ -2,6 +2,8 @@ package com.velov.olegmobile.httputils;
 
 import android.net.Uri;
 
+import com.velov.olegmobile.httputils.authorization.Status;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +40,7 @@ public class HttpUtils {
      * Method send http request
      * @param client httpclient name
      * @param request require prepared request
-     * @return access token as string
+     * @return access_token param as String
      */
     public static Response makeRequest(OkHttpClient client, Request request) {
         Call call = client.newCall(request);

@@ -18,8 +18,8 @@ import okhttp3.Response;
 
 public class TokenUtils extends HttpUtils {
     public static final String OLEG_LOGIN_URL = "https://olegbackend.ru/api_users/users/login";
-    public static final String OLEG_REGISTER_URL =
-            "https://olegbackend.ru/api_users/users/register";
+    public static final String OLEG_REGISTER_URL = "https://olegbackend.ru/api_users/users/register";
+
     static String message = null;
 
     /**

@@ -12,6 +12,8 @@ import java.util.Objects;
 public class SharedPreferencesStorage {
     private Context context;
 
+
+
     public boolean existingTokenCheck(Context context, SharedPreferences preferences) {
         preferences = context.getSharedPreferences("access_token", MODE_PRIVATE);
         String access_token = preferences.getString("token", "undefined");
