@@ -2,7 +2,6 @@ package com.velov.olegmobile.activities;
 
 import static com.velov.olegmobile.httputils.HttpUtils.generateURL;
 import static com.velov.olegmobile.httputils.authorization.TokenUtils.getStatus;
-import static com.velov.olegmobile.httputils.authorization.TokenUtils.getToken;
 import static com.velov.olegmobile.httputils.calendar.CalendarUtils.*;
 import static com.velov.olegmobile.httputils.calendar.CalendarUtils.CALENDAR_URL;
 
@@ -42,37 +41,42 @@ public class CalendarActivity extends AppCompatActivity {
         }
 
         String calendarData = null;
+
+        /**
+         * Method invoke return to login page
+         */
+        public void goToLogin() {
+            Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+        }
+
         @Override
         public void run() { //Background work instead of doInBackground()
+            //Make request
             URL url = generateURL(CALENDAR_URL);
             OkHttpClient client = new OkHttpClient();
             SharedPreferences sh = getSharedPreferences("access_token", MODE_PRIVATE);
             String token = sh.getString("token", "undefined"); //fix
-            Request request = buildRequest(client, url, token);
+            Request request = buildGetRequest(client, url, token);
             Response response = makeRequest(client, request);
+
             status = getStatus(response);
+
             try {
                 switch (status) {
-                    case ERROR: {
-                        Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(intent);
-                    }
-                    case CONNECTION_ERROR: {
-                        Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(intent);
+                    case OK: {
+                        try {
+                            calendarData = response.body().string();
+                        } catch (IOException | NullPointerException e) {
+                            goToLogin();
+                        }
+                        break;
+                    } default: {
+                        goToLogin();
                     }
                 }
             } finally {
-                try {
-                    calendarData = response.body().string();
-                } catch (IOException | NullPointerException e) {
-                    Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
-                }
-
                 handler.post(new Runnable() { //UI Thread instead of onPostExecute()
                     @Override
                     public void run() {

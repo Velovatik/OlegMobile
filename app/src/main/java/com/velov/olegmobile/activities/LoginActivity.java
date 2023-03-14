@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
 
-    SharedPreferences tokenPreferences;
+    SharedPreferences tokenPreferences; //Initialize memory fragment for <K, V> pairs storage
 
     /**
      * Method invoke redirection on calendar activity
@@ -57,14 +57,14 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //Those methods will be moved to middleWare
+    //Those methods will be moved to middleWare----------
     public boolean existingTokenCheck(SharedPreferences preferences) {
-        preferences = getSharedPreferences("access_token", MODE_PRIVATE);
-        String access_token = preferences.getString("token", "undefined");
-        if (!Objects.equals(access_token, "undefined")) {
+        preferences = getSharedPreferences("access_token", MODE_PRIVATE); //access_token is name of prefs file
+        String access_token = preferences.getString("token", "undefined"); //get prefs with name "token"
+        if (!Objects.equals(access_token, "undefined")) { //If there is default value, there is no prev token
             return false;
         }
-        else return true;
+        else return true; //If there is a token, return true
     }
 
     public void writeTokenToCookies(SharedPreferences preferences, String value) {
@@ -73,8 +73,9 @@ public class LoginActivity extends AppCompatActivity {
         tokenEditor.putString("token", value);
         tokenEditor.apply();
     }
+    //---------------------------------------------------
 
-    private String token = null; //Variable for writing and reading access_token param
+    private String token = null; //Initialize variable for writing and reading access_token param
 
     class ReturnToken implements Runnable {
         private Status status = Status.DEFAULT;
@@ -165,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Connection for layouts
+        //Connection to layout views
         result = findViewById(R.id.tv_result);
         name = findViewById(R.id.et_name);
         login = findViewById(R.id.et_login);
@@ -173,13 +174,14 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.bt_login);
         registerButton = findViewById(R.id.bt_register);
 
+        //If there is already token written to memory, go to next Activity
         if (existingTokenCheck(tokenPreferences)) {
             goToCalendar();
         }
 
         View.OnClickListener onClickLoginListener = new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) { //Execute authentication
                 ReturnToken returnToken = new ReturnToken();
                 executor.execute(returnToken);
             }
@@ -187,12 +189,9 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(onClickLoginListener);
 
-
-
         View.OnClickListener onClickRegisterListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (type == AuthorizationType.LOGIN) {
                     type =  AuthorizationType.REGISTER;
 
