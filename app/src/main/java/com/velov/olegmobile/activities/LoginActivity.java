@@ -13,6 +13,7 @@ import static com.velov.olegmobile.httputils.authorization.TokenUtils.parseJSON;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.velov.olegmobile.R;
 import com.velov.olegmobile.httputils.authorization.AuthorizationType;
 import com.velov.olegmobile.httputils.authorization.User;
 import com.velov.olegmobile.httputils.authorization.Status;
+import com.velov.olegmobile.middleware.SharedPreferencesStorage;
 
 import java.net.URL;
 import java.util.Objects;
@@ -47,6 +49,11 @@ public class LoginActivity extends AppCompatActivity {
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
 
+    //Instruments for middleware
+    Context context; //Initialize context and set it in onCreate() method for activity
+    SharedPreferencesStorage storage = new SharedPreferencesStorage();
+    //==========================
+
     SharedPreferences tokenPreferences; //Initialize memory fragment for <K, V> pairs storage
 
     /**
@@ -56,24 +63,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
         startActivity(intent);
     }
-
-    //Those methods will be moved to middleWare----------
-    public boolean existingTokenCheck(SharedPreferences preferences) {
-        preferences = getSharedPreferences("access_token", MODE_PRIVATE); //access_token is name of prefs file
-        String access_token = preferences.getString("token", "undefined"); //get prefs with name "token"
-        if (!Objects.equals(access_token, "undefined")) { //If there is default value, there is no prev token
-            return false;
-        }
-        else return true; //If there is a token, return true
-    }
-
-    public void writeTokenToCookies(SharedPreferences preferences, String value) {
-        preferences = getSharedPreferences("access_token", MODE_PRIVATE); //access_token is name of prefs file
-        SharedPreferences.Editor tokenEditor = preferences.edit();
-        tokenEditor.putString("token", value);
-        tokenEditor.apply();
-    }
-    //---------------------------------------------------
 
     private String token = null; //Initialize variable for writing and reading access_token param
 
@@ -148,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         } finally {
-                            writeTokenToCookies(tokenPreferences, token);
+                            storage.writeTokenToCookies(context, tokenPreferences, token);
 
                             if (getRequestStatus() == Status.OK) {
                                 goToCalendar();
@@ -166,6 +155,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        /**
+         * Get activity context to invoke methods that work with SharedPrefs
+         */
+        context = getApplicationContext(); //Get activity context for middleware
+
         //Connection to layout views
         result = findViewById(R.id.tv_result);
         name = findViewById(R.id.et_name);
@@ -175,7 +169,7 @@ public class LoginActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.bt_register);
 
         //If there is already token written to memory, go to next Activity
-        if (existingTokenCheck(tokenPreferences)) {
+        if (storage.existingTokenCheck(context, tokenPreferences)) {
             goToCalendar();
         }
 
