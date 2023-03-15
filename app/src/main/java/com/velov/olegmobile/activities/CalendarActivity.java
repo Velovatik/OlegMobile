@@ -73,7 +73,7 @@ public class CalendarActivity extends AppCompatActivity {
                         }
                         break;
                     } default: {
-                        goToLogin();
+                        goToLogin(); //if error, redirect to start page
                     }
                 }
             } finally {

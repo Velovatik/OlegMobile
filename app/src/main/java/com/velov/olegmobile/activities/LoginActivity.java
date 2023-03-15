@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
         /**
          * Get activity context to invoke methods that work with SharedPrefs
          */
-        context = getApplicationContext(); //Get activity context for middleware
+        context = getApplicationContext(); //Set activity context for middleware
 
         //Connection to layout views
         result = findViewById(R.id.tv_result);
@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (type == AuthorizationType.LOGIN) {
-                    type =  AuthorizationType.REGISTER;
+                    type = AuthorizationType.REGISTER;
 
                     name.setVisibility(View.VISIBLE);
 

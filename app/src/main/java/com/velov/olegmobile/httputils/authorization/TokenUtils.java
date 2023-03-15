@@ -97,6 +97,8 @@ public class TokenUtils extends HttpUtils {
 
         if (statusCode == 200) {
             return Status.OK;
+        } else if (statusCode == 422) { //Condition for invalid token
+            return Status.TOKEN_ERROR;
         } else {
             return Status.ERROR;
         }

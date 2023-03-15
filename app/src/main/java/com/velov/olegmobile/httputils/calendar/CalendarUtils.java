@@ -15,11 +15,11 @@ public class CalendarUtils extends HttpUtils {
      */
     public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar?cal_date=2022-05-26"; //Динамически вставлять дату
 
+    /**
+     * Method for building GET request for calendar data
+     */
     public static Request buildGetRequest(OkHttpClient client, URL url, String token) {
 
-        /**
-         * Method for building GET request for calendar data
-         */
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("X-API-KEY", "oleg")
