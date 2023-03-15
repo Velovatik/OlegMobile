@@ -16,6 +16,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HttpUtils {
+    static String message = null;
     /**
      * URL parser for request
      * @param stringUrl requires URI in String format
@@ -53,5 +54,32 @@ public class HttpUtils {
             call.cancel();
         }
         return response;
+    }
+
+    /**
+     * Middleware layer for getting response status and validate fields
+     * Cycling through enum and show status
+     * @param response use response from server for status recognition
+     * @return enum value that shows is everything OK
+     */
+    public static Status getStatus(Response response) {
+        int statusCode = 0;
+        String token = null;
+        String message = null;
+        Status status = Status.DEFAULT;
+        try{
+            message = response.body().string();
+        } catch (IOException | NullPointerException e) {
+            return Status.CONNECTION_ERROR;
+        }
+        statusCode = response.code();
+
+        if (statusCode == 200) {
+            return Status.OK;
+        } else if (statusCode == 422) { //Condition for invalid token
+            return Status.TOKEN_ERROR;
+        } else {
+            return Status.ERROR;
+        }
     }
 }

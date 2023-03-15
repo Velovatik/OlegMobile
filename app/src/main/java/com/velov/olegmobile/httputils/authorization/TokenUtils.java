@@ -20,8 +20,6 @@ public class TokenUtils extends HttpUtils {
     public static final String OLEG_LOGIN_URL = "https://olegbackend.ru/api_users/users/login";
     public static final String OLEG_REGISTER_URL = "https://olegbackend.ru/api_users/users/register";
 
-    static String message = null;
-
     /**
      * Method for parsing JSON
      * @param login user's login
@@ -79,37 +77,17 @@ public class TokenUtils extends HttpUtils {
     }
 
     /**
-     * Middleware layer for getting response status and validate fields
-     * Cycling through enum and show status
-     * @param response use response from server for status recognition
-     * @return enum value that shows is everything OK
-     */
-    public static Status getStatus(Response response) {
-        int statusCode = 0;
-        String token = null;
-        Status status = Status.DEFAULT;
-        try{
-            message = response.body().string();
-        } catch (IOException | NullPointerException e) {
-            return Status.CONNECTION_ERROR;
-        }
-        statusCode = response.code();
-
-        if (statusCode == 200) {
-            return Status.OK;
-        } else if (statusCode == 422) { //Condition for invalid token
-            return Status.TOKEN_ERROR;
-        } else {
-            return Status.ERROR;
-        }
-    }
-
-    /**
      * if getStatus() returns Status.OK it returns token for further authorization
      * @param response use response from server for JSON serialization key from "access_token" value
      * @return serialized access_token
      */
     public static String getToken(Response response) {
+        String message = null;
+        try{
+            message = response.body().string();
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace(); //Add better handling in future
+        }
         JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
         String token = responseJSON.get("access_token").getAsString();
         return token;
