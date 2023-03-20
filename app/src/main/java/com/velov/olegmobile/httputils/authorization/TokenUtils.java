@@ -82,12 +82,7 @@ public class TokenUtils extends HttpUtils {
      * @return serialized access_token
      */
     public static String getToken(Response response) {
-        String message = null;
-        try{
-            message = response.body().string();
-        } catch (IOException | NullPointerException e) {
-            e.printStackTrace(); //Add better handling in future
-        }
+        String message = getMessage();
         JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
         String token = responseJSON.get("access_token").getAsString();
         return token;

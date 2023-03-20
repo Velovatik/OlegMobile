@@ -66,11 +66,7 @@ public class CalendarActivity extends AppCompatActivity {
             try {
                 switch (status) {
                     case OK: {
-                        try {
-                            calendarData = response.body().string();
-                        } catch (IOException | NullPointerException e) {
-                            goToLogin();
-                        }
+                        calendarData = getMessage();
                         break;
                     } default: {
                         goToLogin(); //if error, redirect to start page

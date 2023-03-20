@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -19,7 +20,7 @@ public class CalendarUtils extends HttpUtils {
     /**
      * URL will be build for concrete date/week
      */
-    public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar?cal_date=2022-05-26"; //Динамически вставлять дату
+    public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar?cal_date=2022-07-09";//Динамически вставлять дату
     //YYYY-MM-DD
 
     //Methods to get current data for query parameters
@@ -29,7 +30,7 @@ public class CalendarUtils extends HttpUtils {
     }
 
     private static String getISO8601StringForDate(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
         return dateFormat.format(date);
     }

@@ -17,6 +17,11 @@ import okhttp3.Response;
 
 public class HttpUtils {
     static String message = null;
+
+    public static String getMessage() { //Getter in case request is already closed
+        return message;
+    }
+
     /**
      * URL parser for request
      * @param stringUrl requires URI in String format
@@ -65,7 +70,6 @@ public class HttpUtils {
     public static Status getStatus(Response response) {
         int statusCode = 0;
         String token = null;
-        String message = null;
         Status status = Status.DEFAULT;
         try{
             message = response.body().string();
