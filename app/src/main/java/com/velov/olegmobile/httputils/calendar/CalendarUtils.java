@@ -14,6 +14,7 @@ public class CalendarUtils extends HttpUtils {
      * URL will be build for concrete date/week
      */
     public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar?cal_date=2022-05-26"; //Динамически вставлять дату
+    //YYYY-MM-DD
 
     /**
      * Method for building GET request for calendar data
