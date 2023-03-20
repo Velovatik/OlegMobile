@@ -60,13 +60,14 @@ public class CalendarActivity extends AppCompatActivity {
             String token = sh.getString("token", "undefined"); //fix
             Request request = buildGetRequest(client, url, token);
             Response response = makeRequest(client, request);
+            getResponseJSON(response);
 
             status = getStatus(response);
 
             try {
                 switch (status) {
                     case OK: {
-                        calendarData = getMessage();
+                        calendarData = getMessage(); //String JSON without parsing
                         break;
                     } default: {
                         goToLogin(); //if error, redirect to start page

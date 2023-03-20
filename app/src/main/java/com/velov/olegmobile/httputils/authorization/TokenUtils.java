@@ -78,12 +78,10 @@ public class TokenUtils extends HttpUtils {
 
     /**
      * if getStatus() returns Status.OK it returns token for further authorization
-     * @param response use response from server for JSON serialization key from "access_token" value
+     * @param responseJSON use response from server in JsonObject format for JSON serialization key from "access_token" value
      * @return serialized access_token
      */
-    public static String getToken(Response response) {
-        String message = getMessage();
-        JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
+    public static String getToken(JsonObject responseJSON) {
         String token = responseJSON.get("access_token").getAsString();
         return token;
     }

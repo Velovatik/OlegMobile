@@ -2,6 +2,8 @@ package com.velov.olegmobile.httputils;
 
 import android.net.Uri;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.velov.olegmobile.httputils.authorization.Status;
 
 import java.io.IOException;
@@ -18,6 +20,10 @@ import okhttp3.Response;
 public class HttpUtils {
     static String message = null;
 
+    /**
+     * Getter for field
+     * @return
+     */
     public static String getMessage() { //Getter in case request is already closed
         return message;
     }
@@ -85,5 +91,16 @@ public class HttpUtils {
         } else {
             return Status.ERROR;
         }
+    }
+
+    /**
+     * Method returns JsonObject for getting some params from it
+     * @param response
+     * @return
+     */
+    public static JsonObject getResponseJSON(Response response) {
+        String message = getMessage();
+        JsonObject responseJSON = new Gson().fromJson(message, JsonObject.class);
+        return responseJSON;
     }
 }

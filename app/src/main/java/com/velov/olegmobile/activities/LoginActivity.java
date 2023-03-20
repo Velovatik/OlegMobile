@@ -1,6 +1,7 @@
 package com.velov.olegmobile.activities;
 
 
+import static com.velov.olegmobile.httputils.HttpUtils.getResponseJSON;
 import static com.velov.olegmobile.httputils.authorization.TokenUtils.OLEG_LOGIN_URL;
 import static com.velov.olegmobile.httputils.authorization.TokenUtils.OLEG_REGISTER_URL;
 import static com.velov.olegmobile.httputils.authorization.TokenUtils.buildRequest;
@@ -24,6 +25,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.JsonObject;
 import com.velov.olegmobile.R;
 import com.velov.olegmobile.httputils.authorization.AuthorizationType;
 import com.velov.olegmobile.httputils.authorization.User;
@@ -123,7 +125,8 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             switch (status) {
                                 case OK: {
-                                    token = getToken(response);
+                                    JsonObject JSONResponse= getResponseJSON(response);
+                                    token = getToken(JSONResponse);
                                     result.setText(token); //Field for test response from server
                                     break;
                                 }
