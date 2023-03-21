@@ -95,8 +95,8 @@ public class HttpUtils {
 
     /**
      * Method returns JsonObject for getting some params from it
-     * @param response
-     * @return
+     * @param response require Response from server
+     * @return JsonObject for further manipulations
      */
     public static JsonObject getResponseJSON(Response response) {
         String message = getMessage();

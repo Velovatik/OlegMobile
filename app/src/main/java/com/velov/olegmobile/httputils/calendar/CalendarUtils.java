@@ -20,29 +20,32 @@ public class CalendarUtils extends HttpUtils {
     /**
      * URL will be build for concrete date/week
      */
-    public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar?cal_date=2022-07-09";//Динамически вставлять дату
+    public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar";//Динамически вставлять дату
     //YYYY-MM-DD
 
-    //Methods to get current data for query parameters
+    //Methods to get current date for query parameters
     public static String getCurrentDate() {
         Date now = new Date();
-        return getISO8601StringForDate(now);
+        return getISO8601Date(now);
     }
 
-    private static String getISO8601StringForDate(Date date) {
+    private static String getISO8601Date(Date date) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
         return dateFormat.format(date);
     }
-    //===============================================
+    //================================================
 
     /**
      * Method for building GET request for calendar data
+     * with headers and query params
      */
-    public static Request buildGetRequest(OkHttpClient client, URL url, String token) {
+    public static Request buildGetRequest(OkHttpClient client, String url, String token) {
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
+        httpBuilder.addQueryParameter("cal_date", getCurrentDate());
 
         Request request = new Request.Builder()
-                .url(url)
+                .url(httpBuilder.build())
                 .addHeader("X-API-KEY", "oleg")
                 .addHeader("Connection", "keep-alive")
                 .addHeader("Authorization", "Bearer " + token)
