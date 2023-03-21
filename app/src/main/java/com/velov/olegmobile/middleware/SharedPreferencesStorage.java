@@ -15,7 +15,7 @@ public class SharedPreferencesStorage {
     public boolean existingTokenCheck(Context context, SharedPreferences preferences) {
         preferences = context.getSharedPreferences("access_token", MODE_PRIVATE);
         String access_token = preferences.getString("token", "undefined");
-        if (!Objects.equals(access_token, "undefined")) {
+        if (Objects.equals(access_token, "undefined")) {
             return false;
         }
         else return true;
