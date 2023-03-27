@@ -36,9 +36,6 @@ public class CalendarUtils extends HttpUtils {
         return dateFormat.format(date);
     }
 
-//    private static String nextWeek() {
-//
-//    }
     //================================================
 
     /**
