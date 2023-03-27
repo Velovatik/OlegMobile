@@ -6,6 +6,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -20,7 +21,7 @@ public class CalendarUtils extends HttpUtils {
     /**
      * URL will be build for concrete date/week
      */
-    public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar";//Динамически вставлять дату
+    public static String CALENDAR_URL = "https://olegbackend.ru/api_booking/event/calendar";//Add date with query params
     //YYYY-MM-DD
 
     //Methods to get current date for query parameters
@@ -30,10 +31,14 @@ public class CalendarUtils extends HttpUtils {
     }
 
     private static String getISO8601Date(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
         return dateFormat.format(date);
     }
+
+//    private static String nextWeek() {
+//
+//    }
     //================================================
 
     /**
